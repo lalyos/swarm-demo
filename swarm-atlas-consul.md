@@ -8,23 +8,15 @@ machine create -d google --google-machine-type n1-standard-1 --google-zone europ
 machine create -d google --google-machine-type n1-standard-1 --google-zone europe-west1-b --google-project siq-haas boot-5
 ```
 
-## Consul bootstrap
-
-Starting 3 consul servers, and 2 additional agents. Let swarm schedule them randomly
-
-```
-export CON_DOCKER_IMG=sequenceiq/consul:v0.5.0-v4
-export CON_DOCKER_OPTS="-d --net=host -p 8500:8500 -p 8400:8400"
-export ATLAS_OPTS="-atlas-join -atlas-token=$ATLAS_TOKEN -atlas=sequenceiq/swarm"
-
-docker run --name=consul-1 $CON_DOCKER_OPTS $CON_DOCKER_IMG $ATLAS_OPTS -server -bootstrap
-docker run --name=consul-2 $CON_DOCKER_OPTS $CON_DOCKER_IMG $ATLAS_OPTS -server
-docker run --name=consul-3 $CON_DOCKER_OPTS $CON_DOCKER_IMG $ATLAS_OPTS -server
-docker run --name=consul-4 $CON_DOCKER_OPTS $CON_DOCKER_IMG $ATLAS_OPTS
-docker run --name=consul-5 $CON_DOCKER_OPTS $CON_DOCKER_IMG $ATLAS_OPTS
-```
-
 ## Start swarm manager
+
+For discovery lets use a file:
+```
+for m in boot-{1..5}; do 
+  echo $(machine ip $m):2376
+  # machine ip $m &> /dev/null &&  echo $(machine ip $m):2376
+done > swarm
+```
 
 locally on laptop/host
 ```
@@ -64,6 +56,27 @@ docker() {
     -H tcp://127.0.0.1:3376 \
     "$@"
 }
+```
+
+## Consul bootstrap
+
+Starting 3 consul servers, and 2 additional agents. Let swarm schedule them randomly
+
+```
+export CON_DOCKER_IMG=sequenceiq/consul:v0.5.0-v4
+export CON_DOCKER_OPTS="-d --net=host -p 8500:8500 -p 8400:8400"
+export ATLAS_OPTS="-atlas-join -atlas-token=$ATLAS_TOKEN -atlas=sequenceiq/swarm"
+
+docker run --name=consul-1 $CON_DOCKER_OPTS $CON_DOCKER_IMG $ATLAS_OPTS -server -bootstrap
+docker run --name=consul-2 $CON_DOCKER_OPTS $CON_DOCKER_IMG $ATLAS_OPTS -server
+docker run --name=consul-3 $CON_DOCKER_OPTS $CON_DOCKER_IMG $ATLAS_OPTS -server
+docker run --name=consul-4 $CON_DOCKER_OPTS $CON_DOCKER_IMG $ATLAS_OPTS
+docker run --name=consul-5 $CON_DOCKER_OPTS $CON_DOCKER_IMG $ATLAS_OPTS
+```
+
+starting 5 registrator:
+```
+echo {1..5} | xargs -n 1 docker run -d -p 9999:9999 --net=host -v /var/run/docker.sock:/tmp/docker.sock gliderlabs/registrator:v5 consul://127.0.0.1:8500
 ```
 
 ## Consul commands
