@@ -65,3 +65,11 @@ docker() {
     "$@"
 }
 ```
+
+## Consul commands
+
+You can talk to remote consuls, via the RPC addre. To get the consul ip you can simple `docker inspect`
+
+```
+CONSUL_RPC_ADDR=$(docker inspect -f '{{.Node.IP}}'  consul-1):8400 consul members
+```
