@@ -76,7 +76,12 @@ docker run --name=consul-5 $CON_DOCKER_OPTS $CON_DOCKER_IMG $ATLAS_OPTS
 
 starting 5 registrator:
 ```
-echo {1..5} | xargs -n 1 docker run -d -p 9999:9999 --net=host -v /var/run/docker.sock:/tmp/docker.sock gliderlabs/registrator:v5 consul://127.0.0.1:8500
+echo {1..5} | xargs -n 1 docker run \
+  -d \
+  -p 9999:9999 \
+  --net=host \
+  -v /var/run/docker.sock:/tmp/docker.sock \
+  gliderlabs/registrator:v5 consul://127.0.0.1:8500
 ```
 
 ## Consul commands
