@@ -13,15 +13,15 @@ machine create -d google --google-machine-type n1-standard-1 --google-zone europ
 Starting 3 consul servers, and 2 additional agents. Let swarm schedule them randomly
 
 ```
-DOCKER_IMG=sequenceiq/consul:v0.5.0-v4
-DOCKER_OPTS="-d --net=host -p 8500:8500 -p 8400:8400"
-ATLAS_OPTS="-atlas-join -atlas-token=$ATLAS_TOKEN -atlas=sequenceiq/swarm"
+export CON_DOCKER_IMG=sequenceiq/consul:v0.5.0-v4
+export CON_DOCKER_OPTS="-d --net=host -p 8500:8500 -p 8400:8400"
+export ATLAS_OPTS="-atlas-join -atlas-token=$ATLAS_TOKEN -atlas=sequenceiq/swarm"
 
-docker run --name=consul-1 $DOCKER_OPTS $DOCKER_IMG $ATLAS_OPTS -server -bootstrap
-docker run --name=consul-2 $DOCKER_OPTS $DOCKER_IMG $ATLAS_OPTS -server
-docker run --name=consul-3 $DOCKER_OPTS $DOCKER_IMG $ATLAS_OPTS -server
-docker run --name=consul-4 $DOCKER_OPTS $DOCKER_IMG $ATLAS_OPTS
-docker run --name=consul-5 $DOCKER_OPTS $DOCKER_IMG $ATLAS_OPTS
+docker run --name=consul-1 $CON_DOCKER_OPTS $CON_DOCKER_IMG $ATLAS_OPTS -server -bootstrap
+docker run --name=consul-2 $CON_DOCKER_OPTS $CON_DOCKER_IMG $ATLAS_OPTS -server
+docker run --name=consul-3 $CON_DOCKER_OPTS $CON_DOCKER_IMG $ATLAS_OPTS -server
+docker run --name=consul-4 $CON_DOCKER_OPTS $CON_DOCKER_IMG $ATLAS_OPTS
+docker run --name=consul-5 $CON_DOCKER_OPTS $CON_DOCKER_IMG $ATLAS_OPTS
 ```
 
 ## Start swarm manager
